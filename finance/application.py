@@ -136,7 +136,12 @@ def register():
 		# if username and password is valid then protect their password by using the encrpt function
 		passwordHash = generate_password_hash(request.form.get("password"))
 
-
+        # add the user to the db so that they are stored and log in again
+        result = db.execute("INSERT INTO users(username,hash) VALUES(:username,:hash)",
+                             username=request.form.get("username"),hash=password)
+        # if user already exists return an apology
+        if not result:
+            return apology("username already exists")
 
     return apology("TODO")
 
