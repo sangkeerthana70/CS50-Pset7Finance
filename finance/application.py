@@ -115,35 +115,48 @@ def quote():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     """Register user"""
-    # clear any user_id
+    # Forget any user_id
     session.clear()
 
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
 
-        # Ensure username was submitted
+       # Ensure username was submitted
         if not request.form.get("username"):
             return apology("must provide username", 403)
 
         # Ensure password was submitted
         elif not request.form.get("password"):
             return apology("must provide password", 403)
+        # Ensure confirm password is same as password
+        elif request.form.get("password") != request.form.get("passwordconfirm"):
+            return apology("password must be confirmed", 403)
+        # hash password using encrypt function
+        password = generate_password_hash(request.form.get("password"))
 
-		# Ensure confirm password is same as password
-		elif request.form.get("password") != request.form.get("confirm password"):
-			return apology("must confirm password", 403)
-
-		# if username and password is valid then protect their password by using the encrpt function
-		passwordHash = generate_password_hash(request.form.get("password"))
-
-        # add the user to the db so that they are stored and log in again
+        # save the registered user to db
         result = db.execute("INSERT INTO users(username,hash) VALUES(:username,:hash)",
                              username=request.form.get("username"),hash=password)
-        # if user already exists return an apology
+        # if user already exists in db
         if not result:
             return apology("username already exists")
 
-    return apology("TODO")
+        # Query database for username
+        rows = db.execute("SELECT * FROM users WHERE username = :username",
+                          username=request.form.get("username"))
+
+        print("Executed select statement to query the user in db")
+        # Once user is registered successfully log them in automatically by storing their id in session
+        # Remember which user has logged in
+        session["user_id"] = rows[0]["id"]
+
+        # Redirect user to home page
+        return redirect("/")
+
+    # User reached route via GET (as by clicking a link or via redirect)
+    else:
+        return render_template("register.html")
+
 
 
 @app.route("/sell", methods=["GET", "POST"])
