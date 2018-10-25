@@ -109,13 +109,30 @@ def logout():
 @login_required
 def quote():
     """Get stock quote."""
-    return apology("TODO")
+    # User reached route via POST (as by submitting a form via POST)
+    if request.method == "POST":
+        # Ensure username was submitted
+        symbol = request.form.get("symbol")
+        # if user input an invalid symbol
+        if not symbol:
+            return apology("must provide symbol", 403)
+        # call lookup function inside of helpers.py
+        detail = lookup(symbol)
+
+        if detail == None:
+            return apology("invalid symbol", 403)
+        else: # render price.html for valid symbol input and looup function returns a dict with price details
+            return render_template("price.html",symbol=detail["symbol"],price=usd(detail["price"]))
+
+    # User reached route via GET (as by clicking a link or via redirect)
+    else:
+        return render_template("quote.html")
 
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
     """Register user"""
-    # Forget any user_id
+    # clear any user_id
     session.clear()
 
     # User reached route via POST (as by submitting a form via POST)
