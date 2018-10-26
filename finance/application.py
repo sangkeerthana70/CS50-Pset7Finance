@@ -47,6 +47,23 @@ def index():
 @login_required
 def buy():
     """Buy shares of stock"""
+    # User reached route via POST (as by submitting a form via POST)
+    if request.method == "POST":
+        # Ensure the user inputs a symbol
+        symbol = request.form.get("symbol")
+
+        if not symbol:
+            return apology("must provide a symbol", 403)
+
+        # ensure number of shares is submitted
+        shares = request.form.get("numberofshares")
+
+        if not shares:
+            return apology("must provide number of shares", 403)
+
+        # based on user's input check if they have enough cash to buy stocks
+        rows = db.execute("SELECT cash FROM users WHERE id = :id", id=session["user_id"])
+
     return apology("TODO")
 
 
@@ -113,12 +130,15 @@ def quote():
     if request.method == "POST":
         # Ensure username was submitted
         symbol = request.form.get("symbol")
-        # if user input an invalid symbol
+
+        # if user does not input any symbol
         if not symbol:
             return apology("must provide symbol", 403)
+
         # call lookup function inside of helpers.py
         detail = lookup(symbol)
 
+        # if an inavlid symbol is input by user return an apology
         if detail == None:
             return apology("invalid symbol", 403)
         else: # render price.html for valid symbol input and looup function returns a dict with price details
