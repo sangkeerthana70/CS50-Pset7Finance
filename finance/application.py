@@ -50,16 +50,38 @@ def buy():
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
         # Ensure the user inputs a symbol
-        symbol = request.form.get("symbol")
-
+        symbol = request.form.get("symbol").upper()
         if not symbol:
             return apology("must provide a symbol", 403)
 
         # ensure number of shares is submitted
-        shares = request.form.get("numberofshares")
-
+        shares = request.form.get("shares")
         if not shares:
             return apology("must provide number of shares", 403)
+
+
+        # do a try except for handling negative values or empty spaces in shares input box
+        try:
+            shares = int(shares)
+            if shares < 0:
+                return apology("Enter a positive integer for shares", 403)
+        except ValueError:
+            return apology("No empty spaces allowed enter a positive integer", 403)
+
+        #  call lookup in helpers.py to look up a stock’s current price.
+        stockPriceDetail = lookup(symbol)
+
+        # render apology for invalid symbol input by user
+        if stockPriceDetail == None:
+            return apology("Invalid symbol", 403)
+        else:
+            price = stockPriceDetail["price"]
+
+        # calculate the total price of the number of shares
+        totalCost = price * shares
+
+
+
 
         # based on user's input check if they have enough cash to buy stocks
         rows = db.execute("SELECT cash FROM users WHERE id = :id", id=session["user_id"])
