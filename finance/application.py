@@ -79,14 +79,41 @@ def buy():
 
         # calculate the total price of the number of shares
         totalCost = price * shares
-
-
+        print(totalCost)
 
 
         # based on user's input check if they have enough cash to buy stocks
         rows = db.execute("SELECT cash FROM users WHERE id = :id", id=session["user_id"])
+        print(rows)
 
-    return apology("TODO")
+        cash = rows[0] ["cash"]
+
+        # Check for sufficient cash
+        if cash < totalCost:
+            return apology("you have insufficient cash balance", 403)
+
+        balance = cash - totalCost
+
+        # insert row in transactions table
+        result = db.execute("""insert into transactions
+                               (user_id,stock_code,stock_quantity,stock_price,
+                               start_balance,end_balance,transaction_type)
+                               values(:userid, :symbol, :shares, :price, :cash,
+                               :balance,:ttype)""",
+                               userid=session["user_id"],shares=shares,
+                               symbol=symbol,price=price,
+                               cash=cash,balance=balance,ttype="BOUGHT")
+
+        # update users balance
+        result = db.execute("update users set cash = :balance where id = :userid",
+                              userid=session["user_id"],balance=balance)
+
+        # Redirect user to index page
+        return redirect("/")
+
+    else:
+        symbol = request.args.get('symbol')
+        return render_template("buy.html",symbol=symbol)
 
 
 @app.route("/history")
