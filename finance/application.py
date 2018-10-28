@@ -40,6 +40,8 @@ db = SQL("sqlite:///finance.db")
 @login_required
 def index():
     """Show portfolio of stocks"""
+
+
     return apology("TODO")
 
 
