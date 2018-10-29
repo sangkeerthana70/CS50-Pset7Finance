@@ -41,8 +41,15 @@ db = SQL("sqlite:///finance.db")
 def index():
     """Show portfolio of stocks"""
 
+    rows = db.execute("SELECT cash FROM users WHERE id = :id", id=session["user_id"])
+    print("rows= " , rows)
 
-    return apology("TODO")
+    cash = rows[0] ["cash"]
+
+    stocks = db.execute("SELECT * FROM transactions WHERE id = :id", id=session["user_id"])
+    print(stocks)
+
+    return render_template("index.html")
 
 
 @app.route("/buy", methods=["GET", "POST"])
@@ -86,7 +93,7 @@ def buy():
 
         # based on user's input check if they have enough cash to buy stocks
         rows = db.execute("SELECT cash FROM users WHERE id = :id", id=session["user_id"])
-        print(rows)
+        print("rows= " , rows)
 
         cash = rows[0] ["cash"]
 
