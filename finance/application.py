@@ -53,7 +53,9 @@ def index():
     for stock in stocks:
         print(stock["stock_code"])
         stockDetail = lookup(stock["stock_code"])
-        print(stockDetail)
+        print("StockDetail: ", stockDetail)
+        stock_name = stockDetail["name"]
+        print("Stock Name: ", stock_name)
 
         if stockDetail == None:
             return apology("Not able to determine stock value", 403)
@@ -61,10 +63,11 @@ def index():
         else:
             stockPrice = stockDetail["price"]
             print("price of stock", stockPrice)
-
+            stock_name = stockDetail["name"]
             # total value of each stock the user owns
             stock_value = stock["stock_quantity"] * stockPrice
             holdings = holdings + stock_value
+            stock["stock_name"] = stock_name
             stock["stock_price"] = usd(stockPrice)
             stock["stock_value"] = usd(stock_value)
             print("Total value of each stock: ", stock_value)

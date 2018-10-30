@@ -8,22 +8,35 @@
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>Stocks</th>
+            <th>Symbol</th>
+            <th>Name</th>
             <th>Shares</th>
             <th>Current Price</th>
             <th>Total</th>
          </tr>
     </thead>
-    {% for stock in stocks %}
+
+    <tfoot>
         <tr>
-            <td>{{stock.stock_code}}</td>
-            <td>{{stock.stock_quantity}}</td>
-            <td>{{stock.stock_price}}</td>
-            <td>{{stock.stock_value}}</td>
+            <td colspan="4"></td>
+            <td>{{total}}</td>
         </tr>
-    {% endfor %}
-
+    </tfoot>
+    <tbody>
+        {% for stock in stocks %}
+            <tr>
+                <td>{{stock.stock_code}}</td>
+                <td>{{stock.stock_name}}</td>
+                <td>{{stock.stock_quantity}}</td>
+                <td>{{stock.stock_price}}</td>
+                <td>{{stock.stock_value}}</td>
+            </tr>
+        {% endfor %}
+            <tr>
+                <td>CASH</td>
+                <td colspan="3"></td>
+                <td>{{cash}}</td>
+            </tr>
+    </tbody>
 </table>
-
-
 {% endblock %}
