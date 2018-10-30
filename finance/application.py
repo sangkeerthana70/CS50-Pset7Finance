@@ -63,9 +63,9 @@ def index():
             print("price of stock", stockPrice)
 
             # total value of each stock the user owns
-            stock_value = stock["stock_quantity"] * (stockPrice)
+            stock_value = stock["stock_quantity"] * stockPrice
             holdings = holdings + stock_value
-            stock["stock_price"] = usd(price)
+            stock["stock_price"] = usd(stockPrice)
             stock["stock_value"] = usd(stock_value)
             print("Total value of each stock: ", stock_value)
 
