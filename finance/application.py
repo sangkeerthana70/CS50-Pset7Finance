@@ -46,10 +46,30 @@ def index():
 
     cash = rows[0] ["cash"]
 
-    stocks = db.execute("SELECT * FROM transactions WHERE id = :id", id=session["user_id"])
-    print(stocks)
+    stocks = db.execute("SELECT * FROM transactions WHERE user_id = :user_id", user_id=session["user_id"])
+    print("Stocks= ", stocks)
 
-    return render_template("index.html")
+    holdings = 0
+    for stock in stocks:
+        print(stock["stock_code"])
+        stockDetail = lookup(stock["stock_code"])
+        print(stockDetail)
+
+        if stockDetail == None:
+            return apology("Not able to determine stock value", 403)
+
+        else:
+            stockPrice = stockDetail["price"]
+            print("price of stock", stockPrice)
+
+            # total value of each stock the user owns
+            stock_value = stock["stock_quantity"] * (stockPrice)
+            holdings = holdings + stock_value
+            stock["stock_price"] = usd(price)
+            stock["stock_value"] = usd(stock_value)
+            print("Total value of each stock: ", stock_value)
+
+    return render_template("index.html", stocks=stocks,cash=usd(cash),total=usd(holdings+cash))
 
 
 @app.route("/buy", methods=["GET", "POST"])
