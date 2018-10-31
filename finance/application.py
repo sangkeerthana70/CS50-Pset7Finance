@@ -294,6 +294,8 @@ def sell():
         if not shares:
             return apology("must provide shares", 403)
 
+        return render_template("sell.html")
+
 def errorhandler(e):
     """Handle error"""
     return apology(e.name, e.code)
