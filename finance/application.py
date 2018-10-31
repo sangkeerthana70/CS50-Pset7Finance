@@ -282,7 +282,17 @@ def register():
 def sell():
     """Sell shares of stock"""
     return apology("TODO")
+    if request.method == "POST":
+        # Ensure symbol was submitted
+        symbol = request.form.get("symbol")
+        if not symbol:
+            return apology("must provide symbol", 403)
+        symbol = symbol.upper()
 
+        # Ensure number of shares was submitted
+        shares = request.form.get("shares")
+        if not shares:
+            return apology("must provide shares", 403)
 
 def errorhandler(e):
     """Handle error"""
